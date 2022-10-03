@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
 
 type MessageUIProps = {
   messages: any[];
@@ -13,29 +14,34 @@ const MessageUI: React.FC<MessageUIProps> = ({ messages, sendMessage }) => {
     setReply("");
   };
   return (
-    <div className="messageInterface">
-      <div>
+    <div className="chat-interface">
+      <div className="message-container">
         {messages.map((message: any, i: number) => {
           if (message.type === "info") {
-            return <div key={i}>{message.message}</div>;
+            return (
+              <div key={i} className="info">
+                {message.message}
+              </div>
+            );
           }
           if (message.mine) {
             return (
               <div key={i} className={`message right`}>
-                {message.message}
+                <p>{message.message}</p>
+                <FaUserCircle />
               </div>
             );
           } else {
             return (
-              <div
-                key={i}
-                className={`message left`}
-              >{`${message.from} - ${message.message}`}</div>
+              <div key={i} className={`message left`}>
+                <FaUserCircle />
+                <p>{`${message.from} - ${message.message}`}</p>
+              </div>
             );
           }
         })}
       </div>
-      <div className="messageInput">
+      <div className="message-input">
         <input
           type="text"
           onChange={(e) => setReply(e.target.value)}
