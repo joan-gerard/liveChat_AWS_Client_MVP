@@ -14,29 +14,20 @@ function App() {
 
   const websocketUrl = process.env.REACT_APP_WS_URL;
 
-  console.log({ log: "THE MESSAGES", messages });
-
   const websocketConnect = () => {
-    console.log({ message: "CONNECT CLICKED" });
-
     if (!websocketUrl) return;
 
     const ws = new WebSocket(websocketUrl);
-    console.log({ message: "THE WS", ws });
     setSocket(ws);
   };
 
   useEffect(() => {
-    console.log("createing websocket Use Effect");
     websocketConnect();
   }, []);
 
   socket?.addEventListener("message", function (event) {
-    console.log("message received", event.data);
-
     try {
       const messageData = JSON.parse(event.data);
-      console.log("messageData", messageData);
 
       if (messageData.type === "err") {
         toast(messageData.message);
@@ -50,7 +41,6 @@ function App() {
     }
   });
   socket?.addEventListener("close", function (event) {
-    console.log("ws disconnected");
     setSocket(undefined);
     setJoined(false);
   });
