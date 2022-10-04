@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import MessageUI from "./components/MessageUI";
 import JoinOrCreate from "./components/JoinOrCreate";
@@ -12,26 +11,31 @@ function App() {
   const [joined, setJoined] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
 
-  const websocketUrl = process.env.REACT_APP_WS_URL;
+  const WS_URL = process.env.REACT_APP_WS_URL;
 
   const websocketConnect = () => {
-    if (!websocketUrl) return;
+    if (!WS_URL && !typingUrl) return;
 
-    const ws = new WebSocket(websocketUrl);
-    setSocket(ws);
+    if (WS_URL) {
+      const ws = new WebSocket(WS_URL);
+      setSocket(ws);
+    } else {
+      const ws = new WebSocket(typingUrl);
+      setSocket(ws);
+    }
   };
 
   useEffect(() => {
     websocketConnect();
-  }, []);
+  }, [WS_URL]);
 
   socket?.addEventListener("message", function (event) {
     try {
       const messageData = JSON.parse(event.data);
 
       if (messageData.type === "err") {
-        toast(messageData.message);
         setJoined(false);
+        toast(messageData.message);
         return;
       }
 
@@ -40,6 +44,7 @@ function App() {
       setMessages([...messages, event.data]);
     }
   });
+
   socket?.addEventListener("close", function (event) {
     setSocket(undefined);
     setJoined(false);
@@ -65,6 +70,7 @@ function App() {
   };
   return (
     <div className="App">
+      <ToastContainer />
       {!socket ? (
         <div>
           <input
